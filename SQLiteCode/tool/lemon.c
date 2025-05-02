@@ -1,5 +1,6 @@
 /*
-** Copyright (c) 1991, 1994, 1997, 1998 D. Richard Hipp
+** Original code Copyright (c) 1991, 1994, 1997, 1998 D. Richard Hipp
+** Modifications Copyright (c) 2025 Dakylin Hu  // 替换为你的名字和年份
 **
 ** This file contains all sources (including headers) to the LEMON
 ** LALR(1) parser generator.  The sources have been combined into a
@@ -24,9 +25,14 @@
 ** Author contact information:
 **   drh@acm.org
 **   http://www.hwaci.com/drh/
+**
+** Modifier contact information:
+**   dakylin.hu@outlook.com
+**   https://github.com/dakylin
 */
 #include <stdio.h>
-#include <varargs.h>
+/*#include <varargs.h>*/
+#include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -89,7 +95,8 @@ void Configlist_eat(/* struct config * */);
 void Configlist_reset(/* void */);
 
 /********* From the file "error.h" ***************************************/
-void ErrorMsg( /* char *, int, char *, ... */ );
+/*void ErrorMsg( *//* char *, int, char *, ... */ /*);*/
+void ErrorMsg( const char *format, ... );
 
 /****** From the file "option.h" ******************************************/
 struct s_options {
@@ -1107,12 +1114,13 @@ int max;
 #define ERRMSGSIZE  10000 /* Hope this is big enough.  No way to error check */
 #define LINEWIDTH      79 /* Max width of any output line */
 #define PREFIXLIMIT    30 /* Max width of the prefix on each line */
-void ErrorMsg(va_alist)
-va_dcl
+/*void ErrorMsg(va_alist)*/
+/*va_dcl*/
+void ErrorMsg(const char *format, ...)
 {
   char *filename;
   int lineno;
-  char *format;
+  /*char *format;*/
   char errmsg[ERRMSGSIZE];
   char prefix[PREFIXLIMIT+10];
   int errmsgsize;
@@ -1121,7 +1129,8 @@ va_dcl
   va_list ap;
   int end, restart, base;
 
-  va_start(ap);
+  /*va_start(ap);*/
+  va_start(ap, format);
   filename = va_arg(ap,char*);
   lineno = va_arg(ap,int);
   format = va_arg(ap,char*);

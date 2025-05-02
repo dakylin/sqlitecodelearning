@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 # Guess values for system-dependent variables and create Makefiles.
 # Generated automatically using autoconf version 2.13 
@@ -6,6 +6,7 @@
 #
 # This configure script is free software; the Free Software Foundation
 # gives unlimited permission to copy, distribute and modify it.
+# The shebang was modified from /bin/sh to /bin/bash for compatibility.
 
 # Defaults:
 ac_help=

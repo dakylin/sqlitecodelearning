@@ -1,5 +1,6 @@
 /*
-** Copyright (c) 1999, 2000 D. Richard Hipp
+** Original code Copyright (c) 1999, 2000 D. Richard Hipp
+** Modifications Copyright (c) 2025 Dakylin Hu
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public
@@ -20,6 +21,10 @@
 **   drh@hwaci.com
 **   http://www.hwaci.com/drh/
 **
+** Modifier contact information:
+**   dakylin.hu@outlook.com
+**   https://github.com/dakylin
+**
 *************************************************************************
 ** This file contains code to implement the "sqlite" command line
 ** utility for accessing SQLite databases.
@@ -37,7 +42,8 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 #else
-# define readline getline
+/*# define readline getline*/
+# define readline getline_s
 # define add_history(X) 
 #endif
 
@@ -50,7 +56,8 @@
 ** The interface is like "readline" but no command-line editing
 ** is done.
 */
-static char *getline(char *zPrompt){
+/*static char *getline(char *zPrompt){*/
+static char *getline_s(char *zPrompt){
   char *zLine;
   int nLine;
   int n;
@@ -104,7 +111,8 @@ static char *one_input_line(const char *zPrior, int isatty){
   char *zPrompt;
   char *zResult;
   if( !isatty ){
-    return getline(0);
+    /*return getline(0);*/
+    return getline_s(0);
   }
   if( zPrior && zPrior[0] ){
     zPrompt = "   ...> ";

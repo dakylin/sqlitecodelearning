@@ -5,6 +5,10 @@
 ## Local environment
 - OS Ubuntu 20.04
 - Compiler GCC 11.4
+- Installed libgdbm-dev by
+```bash
+sudo apt install libgdbm-dev
+```
 
 ## Build steps
 ```bash
@@ -31,12 +35,12 @@ vim ../SQLiteCode/configure
 
 2. Make process failed
 ```bash
-In file included from ../SQLiteCode/tool/lemon.c:29:
-/usr/lib/gcc/x86_64-linux-gnu/11/include/varargs.h:4:2: error: #error "GCC no longer implements <varargs.h>."
-    4 | #error "GCC no longer implements <varargs.h>."
-      |  ^~~~~
-/usr/lib/gcc/x86_64-linux-gnu/11/include/varargs.h:5:2: error: #error "Revise your code to use <stdarg.h>."
-    5 | #error "Revise your code to use <stdarg.h>."
+$ In file included from ../SQLiteCode/tool/lemon.c:29:
+$ /usr/lib/gcc/x86_64-linux-gnu/11/include/varargs.h:4:2: error: #error "GCC no longer implements $ <varargs.h>."
+$     4 | #error "GCC no longer implements <varargs.h>."
+$       |  ^~~~~
+$ /usr/lib/gcc/x86_64-linux-gnu/11/include/varargs.h:5:2: error: #error "Revise your code to use $ <stdarg.h>."
+$     5 | #error "Revise your code to use <stdarg.h>."
 ```
 
 - The morden gcc doesn't support varargs.h
@@ -61,4 +65,63 @@ In file included from ../SQLiteCode/tool/lemon.c:29:
 ```
 
 - After the above code change, lemon.c build success.
-- The next step is to fix ./lemon parse.y 
+- The next step is to fix ./lemon parse.y
+
+3. ./lemon parse.y gets coredump
+- Update Makefile, enable DEBUG
+- rebuild lemon and run ./lemon parse.y
+- gdb core file and find the backtrace
+- The issue is in lemon.c
+```C
+1333 #define NEXT(A) (*(char**)(((int)A)+offset))
+..........
+1415 list = NEXT(list);
+```
+- Update the #define
+```C
+1333 /*#define NEXT(A) (*(char**)(((int)A)+offset))*/
+1334 #define NEXT(A) (*(char**)((char*)(A) + offset))
+```
+
+4. src/shell.c get build error
+```bash
+$ error: conflicting types for ‘getline’; have ‘char *(char *)’
+$   53 | static char *getline(char *zPrompt){
+$      |              ^~~~~~~
+$ In file included from ../SQLiteCode/src/shell.c:31:
+$ /usr/include/stdio.h:616:18: note: previous declaration of ‘getline’ with type ‘__ssize_t(char ** restrict,  size_t * restrict,  FILE * restrict)’ {aka ‘long int(char ** restrict,  long unsigned int * restrict,  FILE * restrict)’}
+```
+- In src/shell.c
+```C
+40 /*# define readline getline*/
+41 # define readline getline_s
+......
+54 /*static char *getline(char *zPrompt){*/
+55 static char *getline_s(char *zPrompt){
+....
+109    /*return getline(0);*/
+110    return getline_s(0);
+```
+
+## Run SQLite Demo
+- After make finished,
+```bash
+./sqlite testdb
+```
+- tesedb will be created, create table
+```bash
+Enter ".help" for instructions
+sqlite> CREATE TABLE students
+   ...> (
+   ...> id INTEGER PRIMARY KEY,
+   ...> name TEXT NOT NULL
+   ...> );
+sqlite> INSERT INTO students
+   ...> (id, name)
+   ...> values
+   ...> (1, 'Jim');
+sqlite> select * from students;
+1|Jim
+sqlite> .exit
+
+```

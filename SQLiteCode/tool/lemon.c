@@ -1,6 +1,6 @@
 /*
 ** Original code Copyright (c) 1991, 1994, 1997, 1998 D. Richard Hipp
-** Modifications Copyright (c) 2025 Dakylin Hu  // 替换为你的名字和年份
+** Modifications Copyright (c) 2025 Dakylin Hu
 **
 ** This file contains all sources (including headers) to the LEMON
 ** LALR(1) parser generator.  The sources have been combined into a
@@ -1330,7 +1330,8 @@ char **argv;
 /*
 ** Return a pointer to the next structure in the linked list.
 */
-#define NEXT(A) (*(char**)(((int)A)+offset))
+/*#define NEXT(A) (*(char**)(((int)A)+offset))*/
+#define NEXT(A) (*(char**)((char*)(A) + offset))
 
 /*
 ** Inputs:

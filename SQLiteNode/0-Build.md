@@ -8,13 +8,19 @@
 - Installed libgdbm-dev by
 ```bash
 sudo apt install libgdbm-dev
+
+# optional
+sudo apt libreadline-dev
 ```
 
 ## Build steps
 ```bash
 mkdir -p build/install
 cd build
-../SQLiteCode/configure --prefix=./install
+../SQLiteCode/configure --enable-readline
+../SQLiteCode/configure
+# If installed libreadline-dev, you can add enable readline to keep history command
+# Otherwise, the add_history(zResult) would be replaced by add_history(X)
 make
 ```
 
